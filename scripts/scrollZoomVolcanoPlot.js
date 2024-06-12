@@ -22,14 +22,10 @@ function volcanoPlot() {
         innerHeight = height - margin.top - margin.bottom;
   
       selection.each(function (data) {
-        // set up the scaling for the axes based on the inner width/height of the chart and also the range
-        // of value for the x and y axis variables. This range is defined by their min and max values as
-        // calculated by d3.extent()
+
         xScale.range([0, innerWidth]).domain([-8, 8]); // set the x-axis range from -8 to 8
-  
-        // normally would set the y-range to [height, 0] but by swapping it I can flip the axis and thus
-        // have -log10 scale without having to do extra parsing
-        yScale.range([innerHeight, 0]).domain([1, 20]); // set the y-axis range from 1 to 20 (log scale can't have 0 or negative values)
+
+        yScale.range([innerHeight, 0]).domain([-1, 20]); // set the y-axis range from -1 to 20 (log scale can't have 0 or negative values)
   
         var zoom = d3
           .zoom()
@@ -127,29 +123,36 @@ function volcanoPlot() {
             return tooltip.style("visibility", "hidden");
           });
   
-        var thresholdLines = svg.append("g").attr("class", "thresholdLines");
-  
-        // add horizontal line at significance threshold
-        thresholdLines
-          .append("svg:line")
-          .attr("class", "threshold")
-          .attr("x1", 0)
-          .attr("x2", innerWidth)
-          .attr("y1", yScale(significanceThreshold))
-          .attr("y2", yScale(significanceThreshold));
-  
-        // add vertical line(s) at fold-change threshold (and negative fold-change)
-        [foldChangeThreshold, -1 * foldChangeThreshold].forEach(function (
-          threshold
-        ) {
+          var thresholdLines = svg.append("g").attr("class", "thresholdLines");
+
+          // add horizontal line at y = 1
+          [-1,1].forEach(function(threshold) {
+            thresholdLines
+            .append("svg:line")
+            .attr("class", "threshold")
+            .attr("x1", 0)
+            .attr("x2", innerWidth)
+            .attr("y1", yScale(threshold))
+            .attr("y2", yScale(threshold));
+          })
+    
+          // add vertical line at x = 1
           thresholdLines
             .append("svg:line")
             .attr("class", "threshold")
-            .attr("x1", xScale(threshold))
-            .attr("x2", xScale(threshold))
+            .attr("x1", xScale(1))
+            .attr("x2", xScale(1))
             .attr("y1", 0)
             .attr("y2", innerHeight);
-        });
+    
+          // add vertical line at x = -1
+          thresholdLines
+            .append("svg:line")
+            .attr("class", "threshold")
+            .attr("x1", xScale(-1))
+            .attr("x2", xScale(-1))
+            .attr("y1", 0)
+            .attr("y2", innerHeight);
   
         var tooltip = d3.select("body").append("div").attr("class", "tooltip");
   
@@ -193,14 +196,15 @@ function volcanoPlot() {
         }
   
         function circleClass(d) {
-          if (
-            d[yColumn] <= significanceThreshold &&
-            Math.abs(d[xColumn]) >= foldChangeThreshold
-          )
-            return "dot sigfold";
-          else if (d[yColumn] <= significanceThreshold) return "dot sig";
-          else if (Math.abs(d[xColumn]) >= foldChangeThreshold) return "dot fold";
-          else return "dot";
+            if (d[yColumn] <= 1) {
+                return "dot";
+            } else if (d[yColumn] > 1 && d[xColumn] <= -1) {
+                return "dot sigfold";
+            } else if (d[yColumn] > 1 && d[xColumn] >= 1) {
+                return "dot sig";
+            } else {
+                return "dot";
+            }
         }
   
         function reset() {
