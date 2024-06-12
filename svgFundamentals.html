@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVG Fundamentals</title>
+    <link rel="stylesheet" href="styles/styles.css">
+
+
+    <script defer src="https://d3js.org/d3.v7.min.js"></script>
+    <script defer type="module" src="scripts/solLeWitt.js"></script>
+    <script defer type="module" src="scripts/d3DataJoins.js"></script>
+    <script defer type="module" src="scripts/scatterplot.js"></script>
+
+
+</head>
+
+<body>
+    <header>
+        <h1>Weather Dashboard</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="svgFundamentals.html">SVG Fundamentals</a></li>
+                <li><a href="d3tutorial.html">Other</a></li>
+                <li><a href="https://github.com/andrewlapointe" target="_blank">GitHub</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>Data Visualization with D3 – Full Course for Beginners [2022]</h1>
+        <section id="irisData">
+            <h2>Iris Scatter Plot</h2>
+            <p>Made with D3.</p>
+
+        </section>
+        <section id="dataJoin">
+            <h2>Data Joins</h2>
+            <p>Made with D3.</p>
+        </section>
+        <section id="solLeWitt">
+            <h2>Sol LeWitt Reproduction</h2>
+            <p>Made with D3.</p>
+        </section>
+
+        <section id="svgBasics">
+            <h2>Basic SVG Primitives</h2>
+            <p>
+                These are simple svg primitives including a circle, rect, line, and path. SVG is a XML based markup
+                language which
+                is used to create scalable graphics.
+
+            </p>
+            <svg width="400" height="400">
+                <!-- svg elements must have attributes such as x, and y coordinates -->
+                <circle cx="50" cy="50" r="50"></circle>
+                <rect x="150" y="50" width="50" height="50" fill="red"></rect>
+                <line x1="120" x2="160" y1="50" y2="200" stroke="green" stroke-width="4"></line>
+                <path fill="red" stroke="blue" stroke-width="10" d="M300,300L200,200L185,380M150,300L300,200L250,180">
+                </path>
+            </svg>
+        </section>
+
+    </main>
+</body>
+
+</html>
