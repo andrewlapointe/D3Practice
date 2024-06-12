@@ -83,3 +83,7 @@ body {
     border-style: solid;
     border-color: transparent #000 transparent transparent;
 }
+
+.circle:hover {
+    cursor: pointer;
+}
