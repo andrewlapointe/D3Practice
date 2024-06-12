@@ -55,45 +55,58 @@ function volcanoPlot() {
             // add the axes
             var xAxis = d3.axisBottom(xScale);
             var yAxis = d3.axisLeft(yScale);
-    
+            
+            // add gridlines for x axis
+            svg
+                .append("g")
+                .attr("class", "grid")
+                .attr("transform", "translate(0," + innerHeight + ")")
+                .call(d3.axisBottom(xScale).tickSize(-innerHeight).tickFormat(""));
+
+            // add gridlines for y axis
+            svg
+                .append("g")
+                .attr("class", "grid")
+                .call(d3.axisLeft(yScale).tickSize(-innerWidth).tickFormat(""));
+                
             var gX = svg
-            .append("g")
-            .attr("class", "x axis")
-            .attr("transform", "translate(0," + innerHeight + ")")
-            .call(xAxis);
+                .append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + innerHeight + ")")
+                .call(xAxis);
     
             gX.append("text")
-            .attr("class", "label")
-            .attr(
-                "transform",
-                "translate(" + width / 2 + "," + (margin.bottom - 6) + ")"
-            )
-            .attr("text-anchor", "middle")
-            .html(xAxisLabel || xColumn);
+                .attr("class", "label")
+                .attr(
+                    "transform",
+                    "translate(" + width / 2 + "," + (margin.bottom - 6) + ")"
+                )
+                .attr("text-anchor", "middle")
+                .html(xAxisLabel || xColumn);
     
             var gY = svg.append("g").attr("class", "y axis").call(yAxis);
     
             gY.append("text")
-            .attr("class", "label")
-            .attr(
-                "transform",
-                "translate(" +
-                (0 - margin.left / 1.25) +
-                "," +
-                height / 2 +
-                ") rotate(-90)"
-            )
-            .style("text-anchor", "middle")
-            .html(yAxisLabel || yColumn);
+                .attr("class", "label")
+                .attr(
+                    "transform",
+                    "translate(" +
+                    (0 - margin.left / 1.25) +
+                    "," +
+                    height / 2 +
+                    ") rotate(-90)"
+                )
+                .style("text-anchor", "middle")
+                .html(yAxisLabel || yColumn);
     
             // this rect acts as a layer so that zooming works anywhere in the svg. otherwise, if zoom is called on
             // just svg, zoom functionality will only work when the pointer is over a circle.
             var zoomBox = svg
-            .append("rect")
-            .attr("class", "zoom")
-            .attr("height", innerHeight)
-            .attr("width", innerWidth);
-    
+                .append("rect")
+                .attr("class", "zoom")
+                .attr("height", innerHeight)
+                .attr("width", innerWidth);
+        
             var circles = svg.append("g").attr("class", "circlesContainer");
     
             circles
