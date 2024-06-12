@@ -1,7 +1,5 @@
-function volcanoPlot() {
-    var width = 960,
-        height = 500,
-        margin = { top: 20, right: 20, bottom: 40, left: 50 },
+function volcanoPlot(width = 900, height = 600) {
+    var margin = { top: 20, right: 20, bottom: 40, left: 50 },
         xColumn, // name of the variable to be plotted on the axis
         yColumn,
         xAxisLabel, // label for the axis
@@ -27,7 +25,7 @@ function volcanoPlot() {
     
             var zoom = d3
                 .zoom()
-                .scaleExtent([1, 20])
+                .scaleExtent([1, 2000])
                 .translateExtent([
                     [0, 0],
                     [width, height],
@@ -57,17 +55,17 @@ function volcanoPlot() {
             var yAxis = d3.axisLeft(yScale);
             
             // add gridlines for x axis
-            svg
-                .append("g")
-                .attr("class", "grid")
-                .attr("transform", "translate(0," + innerHeight + ")")
-                .call(d3.axisBottom(xScale).tickSize(-innerHeight).tickFormat(""));
+            // svg
+            //     .append("g")
+            //     .attr("class", "grid")
+            //     .attr("transform", "translate(0," + innerHeight + ")")
+            //     .call(d3.axisBottom(xScale).tickSize(-innerHeight).tickFormat(""));
 
-            // add gridlines for y axis
-            svg
-                .append("g")
-                .attr("class", "grid")
-                .call(d3.axisLeft(yScale).tickSize(-innerWidth).tickFormat(""));
+            // // add gridlines for y axis
+            // svg
+            //     .append("g")
+            //     .attr("class", "grid")
+            //     .call(d3.axisLeft(yScale).tickSize(-innerWidth).tickFormat(""));
                 
             var gX = svg
                 .append("g")
@@ -99,8 +97,33 @@ function volcanoPlot() {
                 .style("text-anchor", "middle")
                 .html(yAxisLabel || yColumn);
     
-            // this rect acts as a layer so that zooming works anywhere in the svg. otherwise, if zoom is called on
-            // just svg, zoom functionality will only work when the pointer is over a circle.
+            // add gridlines
+            var gridLines = svg.append('g')
+                .attr('class', 'grid');
+
+            function make_x_gridlines() {		
+                return d3.axisBottom(xScale)
+                    .ticks(10);
+            }
+
+            function make_y_gridlines() {		
+                return d3.axisLeft(yScale)
+                    .ticks(10);
+            }
+
+            gridLines.append('g')
+                .attr('class', 'x grid')
+                .attr('transform', 'translate(0,' + innerHeight + ')')
+                .call(make_x_gridlines()
+                    .tickSize(-innerHeight)
+                    .tickFormat(''));
+
+            gridLines.append('g')
+                .attr('class', 'y grid')
+                .call(make_y_gridlines()
+                    .tickSize(-innerWidth)
+                    .tickFormat(''));
+
             var zoomBox = svg
                 .append("rect")
                 .attr("class", "zoom")
@@ -200,6 +223,17 @@ function volcanoPlot() {
                 svg.selectAll(".threshold")
                     .attr("transform", transform)
                     .attr("stroke-width", 1 / transform.k);
+                svg.select('.x.grid')
+                    .call(make_x_gridlines()
+                    .tickSize(-innerHeight)
+                    .tickFormat('')
+                    .scale(transform.rescaleX(xScale)));
+
+                svg.select('.y.grid')
+                    .call(make_y_gridlines()
+                    .tickSize(-innerWidth)
+                    .tickFormat('')
+                    .scale(transform.rescaleY(yScale)));
             }
     
             function circleClass(d) {
@@ -213,7 +247,42 @@ function volcanoPlot() {
                     return "dot";
                 }
             }
-        });
+
+                    // Append legend
+            var legend = d3
+                .select("body")
+                .append("div")
+                .attr("class", "legend")
+                .style("position", "absolute")
+                .style("top", margin.top + "px")
+                .style("left", width + margin.left + margin.right + "px"); // Position it to the right of the chart
+
+            legend
+                .append("div")
+                .style("display", "flex")
+                .style("align-items", "center")
+                .style("margin-bottom", "5px")
+                .html(
+                    '<svg width="10" height="10"><circle cx="5" cy="5" r="5" fill="blue"></circle></svg> <span style="margin-left: 5px;">DOWN</span>'
+                );
+
+            legend
+                .append("div")
+                .style("display", "flex")
+                .style("align-items", "center")
+                .style("margin-bottom", "5px")
+                .html(
+                    '<svg width="10" height="10"><circle cx="5" cy="5" r="5" fill="gray"></circle></svg> <span style="margin-left: 5px;">Non-SIG</span>'
+                );
+
+            legend
+                .append("div")
+                .style("display", "flex")
+                .style("align-items", "center")
+                .html(
+                    '<svg width="10" height="10"><circle cx="5" cy="5" r="5" fill="red"></circle></svg> <span style="margin-left: 5px;">UP</span>'
+                );
+                    });
     }
   
     chart.width = function (value) {
