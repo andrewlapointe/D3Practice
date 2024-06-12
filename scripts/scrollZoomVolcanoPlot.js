@@ -11,8 +11,8 @@ function volcanoPlot() {
       xTicks, // number of ticks on the axis
       yTicks,
       sampleID = "Gene",
-      significanceThreshold = 0.05, // significance threshold to colour by
-      foldChangeThreshold = 1.0, // fold change level to colour by
+    //   significanceThreshold = 0.05, // significance threshold to colour by
+    //   foldChangeThreshold = 1.0, // fold change level to colour by
       colorRange, // colour range to use in the plot
       xScale = d3.scaleLinear(), // the values for the axes will be continuous
       yScale = d3.scaleLinear();
@@ -47,10 +47,10 @@ function volcanoPlot() {
           .call(zoom);
   
         // position the reset button and attach reset function
-        d3.select("#resetBtn")
-          .style("top", margin.top * 1.5 + "px")
-          .style("left", margin.left * 1.25 + "px")
-          .on("click", reset);
+        // d3.select("#resetBtn")
+        //   .style("top", margin.top * 1.5 + "px")
+        //   .style("left", margin.left * 1.25 + "px")
+        //   .on("click", reset);
   
         svg
           .append("defs")
@@ -121,6 +121,9 @@ function volcanoPlot() {
           .on("mousemove", tipMove)
           .on("mouseleave", function (d) {
             return tooltip.style("visibility", "hidden");
+          })
+          .on("click", function (d) {
+            window.location.href = "https://www.uniprot.org/uniprotkb/" + d[""]
           });
   
           var thresholdLines = svg.append("g").attr("class", "thresholdLines");
@@ -207,14 +210,14 @@ function volcanoPlot() {
             }
         }
   
-        function reset() {
-          var ease = d3.easePolyIn.exponent(4.0);
-          svg
-            .transition()
-            .duration(750)
-            .ease(ease)
-            .call(zoom.transform, d3.zoomIdentity);
-        }
+        // function reset() {
+        //   var ease = d3.easePolyIn.exponent(4.0);
+        //   svg
+        //     .transition()
+        //     .duration(750)
+        //     .ease(ease)
+        //     .call(zoom.transform, d3.zoomIdentity);
+        // }
       });
     }
   
@@ -284,17 +287,17 @@ function volcanoPlot() {
       return chart;
     };
   
-    chart.significanceThreshold = function (value) {
-      if (!arguments.length) return significanceThreshold;
-      significanceThreshold = value;
-      return chart;
-    };
+    // chart.significanceThreshold = function (value) {
+    //   if (!arguments.length) return significanceThreshold;
+    //   significanceThreshold = value;
+    //   return chart;
+    // };
   
-    chart.foldChangeThreshold = function (value) {
-      if (!arguments.length) return foldChangeThreshold;
-      foldChangeThreshold = value;
-      return chart;
-    };
+    // chart.foldChangeThreshold = function (value) {
+    //   if (!arguments.length) return foldChangeThreshold;
+    //   foldChangeThreshold = value;
+    //   return chart;
+    // };
   
     chart.colorRange = function (value) {
       if (!arguments.length) return colorRange;
