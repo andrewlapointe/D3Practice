@@ -64,8 +64,21 @@ function volcanoPlot() {
         .attr("width", innerWidth);
 
       // add the axes
-      var xAxis = d3.axisBottom(xScale).ticks(9); // set the number of x-axis ticks
+      var xAxis = d3.axisBottom(xScale).tickValues([-4, 0, 4]); // set the number of x-axis ticks
       var yAxis = d3.axisLeft(yScale).tickValues([0, 5, 10, 15]); // set specific y-axis ticks
+
+      // add gridlines for x axis
+      svg
+        .append("g")
+        .attr("class", "grid")
+        .attr("transform", "translate(0," + innerHeight + ")")
+        .call(d3.axisBottom(xScale).tickSize(-innerHeight).tickFormat(""));
+
+      // add gridlines for y axis
+      svg
+        .append("g")
+        .attr("class", "grid")
+        .call(d3.axisLeft(yScale).tickSize(-innerWidth).tickFormat(""));
 
       var gX = svg
         .append("g")
@@ -218,6 +231,33 @@ function volcanoPlot() {
           .ease(ease)
           .call(zoom.transform, d3.zoomIdentity);
       }
+
+      // Append legend
+      var legend = svg
+        .append("g")
+        .attr("class", "legend")
+        .attr(
+          "transform",
+          "translate(" + (width - 150) + "," + (margin.top + 10) + ")"
+        );
+
+      legend
+        .append("circle")
+        .attr("cx", 0)
+        .attr("cy", 0)
+        .attr("r", 5)
+        .style("fill", "blue");
+
+      legend.append("text").attr("x", 10).attr("y", 5).text("DOWN");
+
+      legend
+        .append("circle")
+        .attr("cx", 0)
+        .attr("cy", 20)
+        .attr("r", 5)
+        .style("fill", "red");
+
+      legend.append("text").attr("x", 10).attr("y", 25).text("UP");
     });
   }
 
