@@ -11,8 +11,6 @@ function volcanoPlot() {
       xTicks, // number of ticks on the axis
       yTicks,
       sampleID = "Gene",
-    //   significanceThreshold = 0.05, // significance threshold to colour by
-    //   foldChangeThreshold = 1.0, // fold change level to colour by
       colorRange, // colour range to use in the plot
       xScale = d3.scaleLinear(), // the values for the axes will be continuous
       yScale = d3.scaleLinear();
