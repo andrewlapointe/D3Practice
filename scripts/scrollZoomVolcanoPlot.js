@@ -15,7 +15,7 @@ function volcanoPlot() {
       foldChangeThreshold = 1.0, // fold change level to colour by
       colorRange, // colour range to use in the plot
       xScale = d3.scaleLinear(), // the values for the axes will be continuous
-      yScale = d3.scaleLog();
+      yScale = d3.scaleLinear();
   
     function chart(selection) {
       var innerWidth = width - margin.left - margin.right, // set the size of the chart within its container
@@ -66,7 +66,7 @@ function volcanoPlot() {
   
         // add the axes
         var xAxis = d3.axisBottom(xScale);
-        var yAxis = d3.axisLeft(yScale).ticks(5).tickFormat(yTickFormat);
+        var yAxis = d3.axisLeft(yScale);
   
         var gX = svg
           .append("g")
@@ -158,20 +158,11 @@ function volcanoPlot() {
             .style("visibility", "visible")
             .style("font-size", "11px")
             .html(
-              "<strong>" +
-                sampleID +
-                "</strong>: " +
-                d[sampleID] +
-                "<br/>" +
-                "<strong>" +
-                xColumn +
-                "</strong>: " +
-                d3.format(".2f")(d[xColumn]) +
-                "<br/>" +
-                "<strong>" +
-                yColumn +
-                "</strong>: " +
-                d[yColumn]
+                d[sampleID] + "<br/>" +
+                "<strong>FC</strong>: " + d["FC"] + "<br/>" +
+                "<strong>" + xColumn + "</strong>: " + d3.format(".2f")(d[xColumn]) + "<br/>" +
+                "<strong>Raw PVal</strong>: " + d["raw.pval"] + "<br/>" +
+                "<strong>" + yColumn + "</strong>: " + d[yColumn]
             );
         }
   
