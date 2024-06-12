@@ -39,11 +39,11 @@ body {
 }
 
 .dot.fold {
-  fill: blue;
+  fill: rgb(30, 255, 0);
 }
 
 .dot.sigfold {
-  fill: green;
+  fill: blue;
 }
 
 .zoom {

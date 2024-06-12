@@ -11,11 +11,11 @@ function volcanoPlot() {
     xTicks, // number of ticks on the axis
     yTicks,
     sampleID = "Gene",
-    significanceThreshold = 0.05, // significance threshold to colour by
+    significanceThreshold = 1.0, // significance threshold to colour by
     foldChangeThreshold = 1.0, // fold change level to colour by
     colorRange, // colour range to use in the plot
     xScale = d3.scaleLinear(), // the values for the axes will be continuous
-    yScale = d3.scaleLog();
+    yScale = d3.scaleLinear(); // change to linear scale for easier tick customization
 
   function chart(selection) {
     var innerWidth = width - margin.left - margin.right, // set the size of the chart within its container
@@ -25,11 +25,10 @@ function volcanoPlot() {
       // set up the scaling for the axes based on the inner width/height of the chart and also the range
       // of value for the x and y axis variables. This range is defined by their min and max values as
       // calculated by d3.extent()
-      xScale.range([0, innerWidth]).domain([-8, 8]); // set the x-axis range from -8 to 8
+      xScale.range([0, innerWidth]).domain([-8, 8]); // set the x-axis range from -4 to 4
 
-      // normally would set the y-range to [height, 0] but by swapping it I can flip the axis and thus
-      // have -log10 scale without having to do extra parsing
-      yScale.range([innerHeight, 0]).domain([1, 20]); // set the y-axis range from 1 to 20 (log scale can't have 0 or negative values)
+      // y-axis range from 0 to 15
+      yScale.range([innerHeight, 0]).domain([-1, 20]);
 
       var zoom = d3
         .zoom()
@@ -65,8 +64,8 @@ function volcanoPlot() {
         .attr("width", innerWidth);
 
       // add the axes
-      var xAxis = d3.axisBottom(xScale);
-      var yAxis = d3.axisLeft(yScale).ticks(5).tickFormat(yTickFormat);
+      var xAxis = d3.axisBottom(xScale).ticks(9); // set the number of x-axis ticks
+      var yAxis = d3.axisLeft(yScale).tickValues([0, 5, 10, 15]); // set specific y-axis ticks
 
       var gX = svg
         .append("g")
@@ -129,27 +128,32 @@ function volcanoPlot() {
 
       var thresholdLines = svg.append("g").attr("class", "thresholdLines");
 
-      // add horizontal line at significance threshold
+      // add horizontal line at y = 1
       thresholdLines
         .append("svg:line")
         .attr("class", "threshold")
         .attr("x1", 0)
         .attr("x2", innerWidth)
-        .attr("y1", yScale(significanceThreshold))
-        .attr("y2", yScale(significanceThreshold));
+        .attr("y1", yScale(1))
+        .attr("y2", yScale(1));
 
-      // add vertical line(s) at fold-change threshold (and negative fold-change)
-      [foldChangeThreshold, -1 * foldChangeThreshold].forEach(function (
-        threshold
-      ) {
-        thresholdLines
-          .append("svg:line")
-          .attr("class", "threshold")
-          .attr("x1", xScale(threshold))
-          .attr("x2", xScale(threshold))
-          .attr("y1", 0)
-          .attr("y2", innerHeight);
-      });
+      // add vertical line at x = 2
+      thresholdLines
+        .append("svg:line")
+        .attr("class", "threshold")
+        .attr("x1", xScale(1))
+        .attr("x2", xScale(1))
+        .attr("y1", 0)
+        .attr("y2", innerHeight);
+
+      // add vertical line at x = -2
+      thresholdLines
+        .append("svg:line")
+        .attr("class", "threshold")
+        .attr("x1", xScale(-1))
+        .attr("x2", xScale(-1))
+        .attr("y1", 0)
+        .attr("y2", innerHeight);
 
       var tooltip = d3.select("body").append("div").attr("class", "tooltip");
 
@@ -181,13 +185,6 @@ function volcanoPlot() {
           .style("left", event.pageX + 20 + "px");
       }
 
-      function yTickFormat(n) {
-        return d3.format(".2r")(getBaseLog(10, n));
-        function getBaseLog(x, y) {
-          return Math.log(y) / Math.log(x);
-        }
-      }
-
       function zoomFunction() {
         var transform = d3.zoomTransform(this);
         d3.selectAll(".dot")
@@ -202,14 +199,15 @@ function volcanoPlot() {
       }
 
       function circleClass(d) {
-        if (
-          d[yColumn] <= significanceThreshold &&
-          Math.abs(d[xColumn]) >= foldChangeThreshold
-        )
+        if (d[yColumn] <= 1) {
+          return "dot";
+        } else if (d[yColumn] > 1 && d[xColumn] <= -1) {
           return "dot sigfold";
-        else if (d[yColumn] <= significanceThreshold) return "dot sig";
-        else if (Math.abs(d[xColumn]) >= foldChangeThreshold) return "dot fold";
-        else return "dot";
+        } else if (d[yColumn] > 1 && d[xColumn] >= 1) {
+          return "dot sig";
+        } else {
+          return "dot";
+        }
       }
 
       function reset() {
