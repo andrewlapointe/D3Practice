@@ -350,7 +350,7 @@ function volcanoPlot(width = SVGwidth, height = SVGheight) {
 
 var yLabel = '-log<tspan baseline-shift="sub">10</tspan>(p-value)',
   xLabel = 'log<tspan baseline-shift="sub">2</tspan>(Fold-change)',
-  file = "./data/volcano.csv";
+  file = "../data/volcano.csv";
 
 var volcanoPlot = volcanoPlot()
   .xAxisLabel(xLabel)
@@ -360,7 +360,8 @@ var volcanoPlot = volcanoPlot()
   .yColumn("-log10(p)");
 
 d3.csv(file, parser).then(function(data) {
-  d3.select("#chart").datum([data]).call(volcanoPlot);
+    console.log([data])
+    d3.select("#chart").data([data]).call(volcanoPlot);
 }).catch(function(error){
     console.log(error)
 });
