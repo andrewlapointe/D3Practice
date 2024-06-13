@@ -127,8 +127,13 @@ function volcanoPlot(width = SVGwidth, height = SVGheight) {
         .attr("class", circleClass)
         .on("mouseenter", tipEnter)
         .on("mousemove", tipMove)
-        .on("mouseleave", () =>  tooltip.style("visibility", "hidden"))
-        .on("click", (_, d) => window.open("https://salivaryproteome.org/protein/" + d[""]), "_blank");
+        .on("mouseleave", () => tooltip.style("visibility", "hidden"))
+        .on(
+          "click",
+          (_, d) =>
+            window.open("https://salivaryproteome.org/protein/" + d[""]),
+          "_blank"
+        );
 
       var thresholdLines = svg.append("g").attr("class", "thresholdLines");
 
@@ -164,17 +169,30 @@ function volcanoPlot(width = SVGwidth, height = SVGheight) {
       var tooltip = d3.select("body").append("div").attr("class", "tooltip");
 
       function tipEnter(_, d) {
-        console.log(JSON.stringify(d))
+        console.log(JSON.stringify(d));
         tooltip
-            .style("visibility", "visible")
-            .style("font-size", "11px")
-            .html(
-                "<strong>Primary Accession</strong>: " + d[""] + "<br/>" +
-                "<strong>FC</strong>: " + d["FC"] + "<br/>" +
-                "<strong>" + xColumn + "</strong>: " + d3.format(".2f")(d[xColumn]) + "<br/>" +
-                "<strong>Raw PVal</strong>: " + d["raw.pval"] + "<br/>" +
-                "<strong>" + yColumn + "</strong>: " + d[yColumn]
-            );
+          .style("visibility", "visible")
+          .style("font-size", "11px")
+          .html(
+            "<strong>Primary Accession</strong>: " +
+              d[""] +
+              "<br/>" +
+              "<strong>FC</strong>: " +
+              d["FC"] +
+              "<br/>" +
+              "<strong>" +
+              xColumn +
+              "</strong>: " +
+              d3.format(".2f")(d[xColumn]) +
+              "<br/>" +
+              "<strong>Raw PVal</strong>: " +
+              d["raw.pval"] +
+              "<br/>" +
+              "<strong>" +
+              yColumn +
+              "</strong>: " +
+              d[yColumn]
+          );
       }
 
       function tipMove() {
