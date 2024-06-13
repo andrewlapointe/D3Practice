@@ -56,19 +56,6 @@ function volcanoPlot(width = SVGwidth, height = SVGheight) {
       var xAxis = d3.axisBottom(xScale);
       var yAxis = d3.axisLeft(yScale);
 
-      // add gridlines for x axis
-      // svg
-      //     .append("g")
-      //     .attr("class", "grid")
-      //     .attr("transform", "translate(0," + innerHeight + ")")
-      //     .call(d3.axisBottom(xScale).tickSize(-innerHeight).tickFormat(""));
-
-      // // add gridlines for y axis
-      // svg
-      //     .append("g")
-      //     .attr("class", "grid")
-      //     .call(d3.axisLeft(yScale).tickSize(-innerWidth).tickFormat(""));
-
       var gX = svg
         .append("g")
         .attr("class", "x axis")
@@ -135,21 +122,13 @@ function volcanoPlot(width = SVGwidth, height = SVGheight) {
         .enter()
         .append("circle")
         .attr("r", 3)
-        .attr("cx", function (d) {
-          return xScale(d[xColumn]);
-        })
-        .attr("cy", function (d) {
-          return yScale(d[yColumn]);
-        })
+        .attr("cx", d => xScale(d[xColumn]))
+        .attr("cy", d => yScale(d[yColumn]))
         .attr("class", circleClass)
         .on("mouseenter", tipEnter)
         .on("mousemove", tipMove)
-        .on("mouseleave", function (d) {
-          return tooltip.style("visibility", "hidden");
-        })
-        .on("click", function (d) {
-          window.location.href = "https://www.uniprot.org/uniprotkb/" + d[""];
-        });
+        .on("mouseleave", () =>  tooltip.style("visibility", "hidden"))
+        .on("click", d => window.location.href = "https://salivaryproteome.org/protein/" + d[""]);
 
       var thresholdLines = svg.append("g").attr("class", "thresholdLines");
 
@@ -186,27 +165,15 @@ function volcanoPlot(width = SVGwidth, height = SVGheight) {
 
       function tipEnter(d) {
         tooltip
-          .style("visibility", "visible")
-          .style("font-size", "11px")
-          .html(
-            d[sampleID] +
-              "<br/>" +
-              "<strong>FC</strong>: " +
-              d["FC"] +
-              "<br/>" +
-              "<strong>" +
-              xColumn +
-              "</strong>: " +
-              d3.format(".2f")(d[xColumn]) +
-              "<br/>" +
-              "<strong>Raw PVal</strong>: " +
-              d["raw.pval"] +
-              "<br/>" +
-              "<strong>" +
-              yColumn +
-              "</strong>: " +
-              d[yColumn]
-          );
+            .style("visibility", "visible")
+            .style("font-size", "11px")
+            .html(
+                "<strong>Primary Accession</strong>: " + d[sampleID] + "<br/>" +
+                "<strong>FC</strong>: " + d["FC"] + "<br/>" +
+                "<strong>" + xColumn + "</strong>: " + d3.format(".2f")(d[xColumn]) + "<br/>" +
+                "<strong>Raw PVal</strong>: " + d["raw.pval"] + "<br/>" +
+                "<strong>" + yColumn + "</strong>: " + d[yColumn]
+            );
       }
 
       function tipMove() {
@@ -222,13 +189,13 @@ function volcanoPlot(width = SVGwidth, height = SVGheight) {
         }
       }
 
-      function zoomFunction() {
+      function zoomFunction(d) {
         var transform = d3.zoomTransform(this);
         d3.selectAll(".dot")
           .attr("transform", transform)
           .attr("r", 3 / Math.sqrt(transform.k));
-        gX.call(xAxis.scale(d3.event.transform.rescaleX(xScale)));
-        gY.call(yAxis.scale(d3.event.transform.rescaleY(yScale)));
+        gX.call(xAxis.scale(transform.rescaleX(xScale)));
+        gY.call(yAxis.scale(transform.rescaleY(yScale)));
         svg
           .selectAll(".threshold")
           .attr("transform", transform)
@@ -392,10 +359,10 @@ var volcanoPlot = volcanoPlot()
   .xColumn("log2(FC)")
   .yColumn("-log10(p)");
 
-d3.csv(file, parser, function (error, data) {
-  if (error) console.log(error);
-
-  d3.select("#chart").data([data]).call(volcanoPlot);
+d3.csv(file, parser).then(function(data) {
+  d3.select("#chart").datum([data]).call(volcanoPlot);
+}).catch(function(error){
+    console.log(error)
 });
 
 // row parser to convert key values into numbers if possible
