@@ -163,7 +163,7 @@ function volcanoPlot(width = SVGwidth, height = SVGheight) {
 
       var tooltip = d3.select("body").append("div").attr("class", "tooltip");
 
-      function tipEnter(event, d) {
+      function tipEnter(_, d) {
         console.log(JSON.stringify(d))
         tooltip
             .style("visibility", "visible")
