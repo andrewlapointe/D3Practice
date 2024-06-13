@@ -35,11 +35,11 @@ function volcanoPlot(width = SVGwidth, height = SVGheight) {
         .on("zoom", zoomFunction);
 
       // append the svg object to the selection
-      var svg = d3
+      const svg = d3
         .select(this)
         .append("svg")
-        .attr("height", height)
-        .attr("width", width)
+        .attr("preserveAspectRatio", "xMinYMin meet")
+        .attr("viewBox", `0 0 ${width} ${height}`)
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
         .call(zoom);
