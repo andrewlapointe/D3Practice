@@ -122,13 +122,18 @@ function volcanoPlot(width = SVGwidth, height = SVGheight) {
         .enter()
         .append("circle")
         .attr("r", 3)
-        .attr("cx", d => xScale(d[xColumn]))
-        .attr("cy", d => yScale(d[yColumn]))
+        .attr("cx", (d) => xScale(d[xColumn]))
+        .attr("cy", (d) => yScale(d[yColumn]))
         .attr("class", circleClass)
         .on("mouseenter", tipEnter)
         .on("mousemove", tipMove)
-        .on("mouseleave", () =>  tooltip.style("visibility", "hidden"))
-        .on("click", d => window.location.href = "https://salivaryproteome.org/protein/" + d[""]);
+        .on("mouseleave", () => tooltip.style("visibility", "hidden"))
+        .on(
+          "click",
+          (d) =>
+            (window.location.href =
+              "https://salivaryproteome.org/protein/" + d[""])
+        );
 
       var thresholdLines = svg.append("g").attr("class", "thresholdLines");
 
@@ -165,15 +170,28 @@ function volcanoPlot(width = SVGwidth, height = SVGheight) {
 
       function tipEnter(d) {
         tooltip
-            .style("visibility", "visible")
-            .style("font-size", "11px")
-            .html(
-                "<strong>Primary Accession</strong>: " + d[sampleID] + "<br/>" +
-                "<strong>FC</strong>: " + d["FC"] + "<br/>" +
-                "<strong>" + xColumn + "</strong>: " + d3.format(".2f")(d[xColumn]) + "<br/>" +
-                "<strong>Raw PVal</strong>: " + d["raw.pval"] + "<br/>" +
-                "<strong>" + yColumn + "</strong>: " + d[yColumn]
-            );
+          .style("visibility", "visible")
+          .style("font-size", "11px")
+          .html(
+            "<strong>Primary Accession</strong>: " +
+              d[sampleID] +
+              "<br/>" +
+              "<strong>FC</strong>: " +
+              d["FC"] +
+              "<br/>" +
+              "<strong>" +
+              xColumn +
+              "</strong>: " +
+              d3.format(".2f")(d[xColumn]) +
+              "<br/>" +
+              "<strong>Raw PVal</strong>: " +
+              d["raw.pval"] +
+              "<br/>" +
+              "<strong>" +
+              yColumn +
+              "</strong>: " +
+              d[yColumn]
+          );
       }
 
       function tipMove() {
@@ -231,39 +249,61 @@ function volcanoPlot(width = SVGwidth, height = SVGheight) {
         }
       }
 
-      // Append legend
-      var legend = selection
-        .append("div")
-        .attr("class", "legend")
-        .style("position", "relative")
-        .style("top", -height + 40 + "px")
-        .style("left", width - 135 + "px"); // Position it to the right of the chart
+      function createLegend(selection, legendDict) {
+        // takes svg d3 selection and adds a legend
+        // legendDict must be a dictionary with:
+        // KEY - number
+        // VALUE - an array of 2 elements [str:Label, str:Color]
 
-      legend
-        .append("div")
-        .style("display", "flex")
-        .style("align-items", "center")
-        .style("margin-bottom", "5px")
-        .html(
-          '<svg width="10" height="10"><circle cx="5" cy="5" r="5" fill="blue"></circle></svg> <span style="margin-left: 5px;">DOWN</span>'
-        );
+        var legend = selection
+          .append("g")
+          .attr("class", "legend")
+          .attr("transform", "translate(20, 20)"); // Adjust the position as needed
 
-      legend
-        .append("div")
-        .style("display", "flex")
-        .style("align-items", "center")
-        .style("margin-bottom", "5px")
-        .html(
-          '<svg width="10" height="10"><circle cx="5" cy="5" r="5" fill="gray"></circle></svg> <span style="margin-left: 5px;">Non-SIG</span>'
-        );
+        var legendItems = Object.keys(legendDict).map(function (key) {
+          return {
+            key: key,
+            label: legendDict[key][0],
+            color: legendDict[key][1],
+          };
+        });
 
-      legend
-        .append("div")
-        .style("display", "flex")
-        .style("align-items", "center")
-        .html(
-          '<svg width="10" height="10"><circle cx="5" cy="5" r="5" fill="red"></circle></svg> <span style="margin-left: 5px;">UP</span>'
-        );
+        var legendItem = legend
+          .selectAll(".legend-item")
+          .data(legendItems)
+          .enter()
+          .append("g")
+          .attr("class", "legend-item")
+          .attr("transform", function (d, i) {
+            return "translate(0," + i * 20 + ")";
+          });
+
+        // Add circles
+        legendItem
+          .append("circle")
+          .attr("cx", 5)
+          .attr("cy", 5)
+          .attr("r", 5)
+          .attr("fill", function (d) {
+            return d.color;
+          });
+
+        // Add text
+        legendItem
+          .append("text")
+          .attr("x", 15)
+          .attr("y", 9)
+          .text(function (d) {
+            return d.label;
+          });
+      }
+
+      legendDict = {
+        1: ["DOWN", "Blue"],
+        2: ["Non-SIG", "Gray"],
+        3: ["UP", "Red"],
+      };
+      const legend = createLegend(svg, legendDict);
     });
   }
 
@@ -359,12 +399,14 @@ var volcanoPlot = volcanoPlot()
   .xColumn("log2(FC)")
   .yColumn("-log10(p)");
 
-d3.csv(file, parser).then(function(data) {
-    console.log([data])
+d3.csv(file, parser)
+  .then(function (data) {
+    console.log([data]);
     d3.select("#chart").data([data]).call(volcanoPlot);
-}).catch(function(error){
-    console.log(error)
-});
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
 
 // row parser to convert key values into numbers if possible
 function parser(d) {
