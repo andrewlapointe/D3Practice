@@ -1,34 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/styles.css" />
+    <link rel="stylesheet" href="styles/scrollZoomVolcanoPlot.css" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto+Sans:400,700"
+      rel="stylesheet"
+    />
 
+    <script src="https://d3js.org/d3.v4.min.js"></script>
     <script defer src="https://d3js.org/d3.v7.min.js"></script>
-    <script defer src="scripts/d3.js"></script>
-    <script defer src="script.js"></script>
+    <script src="./scripts/scrollZoomVolcanoPlot.js"></script>
+  </head>
 
-</head>
-
-<body>
+  <body>
     <header>
-        <h1>D3 Practice</h1>
-        <nav>
-            <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="svgFundamentals.html">SVG Fundamentals</a></li>
-                <li><a href="testVolcano.html">Volcano Plot</a></li>
-            </ul>
-        </nav>
+      <h1>D3 Practice</h1>
+      <nav>
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="svgFundamentals.html">SVG Fundamentals</a></li>
+          <li><a href="testVolcano.html">Volcano Plot</a></li>
+        </ul>
+      </nav>
     </header>
     <main>
-<section></section>
-    </main>
-    <footer>
-    </footer>
-</body>
+      <section id="chart">
+        <script>
+          var yLabel = '-log<tspan baseline-shift="sub">10</tspan>(p-value)',
+            xLabel = 'log<tspan baseline-shift="sub">2</tspan>(Fold-change)',
+            file = "./data/volcano.csv";
 
+          var volcanoPlot = volcanoPlot()
+            .xAxisLabel(xLabel)
+            .yAxisLabel(yLabel)
+            .sampleID("")
+            .xColumn("log2(FC)")
+            .yColumn("-log10(p)");
+
+          d3.csv(file, parser, function (error, data) {
+            if (error) console.log(error);
+
+            d3.select("#chart").data([data]).call(volcanoPlot);
+          });
+
+          // row parser to convert key values into numbers if possible
+          function parser(d) {
+            for (var key in d) {
+              if (d.hasOwnProperty(key)) {
+                d[key] = numberParser(d[key]);
+              }
+            }
+            return d;
+          }
+
+          // function to turn string into number if possible
+          function numberParser(value) {
+            return +value ? +value : value;
+          }
+        </script>
+      </section>
+    </main>
+    <footer></footer>
+  </body>
 </html>
