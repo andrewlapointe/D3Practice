@@ -1,4 +1,7 @@
-function volcanoPlot(width = 900, height = 600) {
+const SVGwidth = document.getElementById("chart").offsetWidth * 0.8;
+const SVGheight = 2 * (SVGwidth / 3);
+
+function volcanoPlot(width = SVGwidth, height = SVGheight) {
   var margin = { top: 20, right: 20, bottom: 40, left: 50 },
     xColumn, // name of the variable to be plotted on the axis
     yColumn,
@@ -262,13 +265,12 @@ function volcanoPlot(width = 900, height = 600) {
       }
 
       // Append legend
-      var legend = d3
-        .select("body")
+      var legend = selection
         .append("div")
         .attr("class", "legend")
-        .style("position", "absolute")
-        .style("top", margin.top + "px")
-        .style("left", width + margin.left + margin.right + "px"); // Position it to the right of the chart
+        .style("position", "relative")
+        .style("top", -height + 40 + "px")
+        .style("left", width - 135 + "px"); // Position it to the right of the chart
 
       legend
         .append("div")
