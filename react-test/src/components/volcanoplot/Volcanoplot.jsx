@@ -4,7 +4,7 @@ import * as d3 from "d3";
 import data from "../../data/volcano.csv";
 
 const VolcanoPlot = () => {
-  const chartRef = useRef();
+  const chartRef = useRef(null);
 
   useEffect(() => {
     const SVGwidth = chartRef.current.offsetWidth * 0.8;
@@ -16,18 +16,6 @@ const VolcanoPlot = () => {
     const xScale = d3.scaleLinear().range([0, innerWidth]).domain([-8, 8]);
     const yScale = d3.scaleLinear().range([innerHeight, 0]).domain([-1, 20]);
 
-    const xAxis = d3.axisBottom(xScale);
-    const yAxis = d3.axisLeft(yScale);
-
-    // zoom = d3
-    //   .zoom()
-    //   .scaleExtent([1, 2000])
-    //   .translateExtent([
-    //     [0, 0],
-    //     [width, height],
-    //   ])
-    //   .on("zoom", zoomFunction);
-
     const svg = d3
       .select(chartRef.current)
       .append("svg")
@@ -35,7 +23,6 @@ const VolcanoPlot = () => {
       .attr("height", SVGheight)
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
-    // .call(zoom);
 
     svg
       .append("defs")
@@ -45,22 +32,23 @@ const VolcanoPlot = () => {
       .attr("width", innerWidth)
       .attr("height", innerHeight);
 
+    const xAxis = d3.axisBottom(xScale);
+    const yAxis = d3.axisLeft(yScale);
+
     const gX = svg
       .append("g")
       .attr("class", "x axis")
       .attr("transform", `translate(0,${innerHeight})`)
       .call(xAxis);
 
-    const gY = svg.append("g").attr("class", "y axis").call(yAxis);
-
-    //add x axis label
     gX.append("text")
       .attr("class", "label")
       .attr("transform", `translate(${innerWidth / 2},${margin.bottom - 6})`)
       .attr("text-anchor", "middle")
       .text("log₂(Fold-change)");
 
-    //add y axis label
+    const gY = svg.append("g").attr("class", "y axis").call(yAxis);
+
     gY.append("text")
       .attr("class", "label")
       .attr(
