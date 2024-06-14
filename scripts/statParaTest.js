@@ -46,6 +46,7 @@ function createScatterPlot(
   //Read the data
   const renderViz = async () => {
     const data = await d3.csv(dataFile, parser);
+    // console.log(data);
     // Add X axis
     const x = d3.scaleLinear().domain([0, 1600]).range([0, width]);
     svg
@@ -58,9 +59,10 @@ function createScatterPlot(
     svg.append("g").call(d3.axisLeft(y));
 
     const marks = data.map((d) => ({
-      x: x(xValue(d)),
+      x: x(xValue(d)) * 10_000,
       y: y(yValue(d)),
     }));
+    console.log(marks);
 
     // Add dots
     svg
@@ -69,12 +71,8 @@ function createScatterPlot(
       .data(marks)
       .enter()
       .append("circle")
-      .attr("cx", function (d) {
-        return x(d.GrLivArea);
-      })
-      .attr("cy", function (d) {
-        return y(d.SalePrice);
-      })
+      .attr("cx", (d) => d.x)
+      .attr("cy", (d) => d.y)
       .attr("r", 1.5)
       .style("fill", "#69b3a2");
   };
