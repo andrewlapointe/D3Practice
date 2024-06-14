@@ -1,6 +1,4 @@
-import logo from "./logo.svg";
 import "./App.css";
-import data from "./data/volcano.csv";
 import VolcanoPlot from "./components/volcanoplot/Volcanoplot";
 
 function App() {

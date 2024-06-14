@@ -166,7 +166,10 @@ function volcanoPlot(width = SVGwidth, height = SVGheight) {
         .attr("y1", 0)
         .attr("y2", innerHeight);
 
-      var tooltip = d3.select("body").append("div").attr("class", "tooltip");
+      var tooltip = d3
+        .select("body")
+        .append("div")
+        .attr("class", "tooltipvolcano");
 
       function tipEnter(_, d) {
         console.log(JSON.stringify(d));
@@ -195,7 +198,7 @@ function volcanoPlot(width = SVGwidth, height = SVGheight) {
           );
       }
 
-      function tipMove() {
+      function tipMove(event) {
         tooltip
           .style("top", event.pageY - 5 + "px")
           .style("left", event.pageX + 20 + "px");
