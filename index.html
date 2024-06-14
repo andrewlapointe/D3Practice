@@ -6,21 +6,21 @@
     <title>Document</title>
     <link rel="stylesheet" href="styles/styles.css" />
     <link rel="stylesheet" href="styles/scrollZoomVolcanoPlot.css" />
-    <link rel="stylesheet" href="styles/venn.cs" />
+    <link rel="stylesheet" href="styles/venn.css" />
     <link
       href="https://fonts.googleapis.com/css?family=Noto+Sans:400,700"
       rel="stylesheet"
     />
-
     <script defer src="https://d3js.org/d3.v7.min.js"></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/venn.js@0.2.20/build/venn.min.js"
+    ></script>
     <script defer src="./scripts/scrollZoomVolcanoPlot.js"></script>
     <script defer src="./scripts/scoresPlt.js"></script>
     <script defer src="./scripts/statParaTest.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/venn.js@0.2.20/build/venn.min.js"></script>
     <script defer src="./scripts/venn.js"></script>
-
   </head>
-
   <body>
     <header>
       <h1>D3 Practice</h1>
@@ -38,9 +38,10 @@
         <p>Dynamic, Zoomable, etc.</p>
       </section>
       <section id="venDiagram">
-        <h2></h2>
-        <p></p>
+        <h2>Venn Diagram</h2>
+        <p>Hoverable, Clickable</p>
       </section>
+      <div id="tooltip-venn"></div>
       <section id="statParaTest">
         <h2>T-Tests</h2>
         <p>Greatness to come...</p>

@@ -41,12 +41,17 @@ document.addEventListener("DOMContentLoaded", function () {
     const mostCommonB = getMostCommonProtein(parsedData, "Unique B");
     const mostCommonAB = getMostCommonProtein(parsedData, "Common A B");
 
+    // Construct URLs for salivaryproteome.org
+    const salivaryProteomeBaseUrl = "https://salivaryproteome.org/protein/";
+
     const sets = [
       {
         sets: ["A"],
         size: uniqueA.length,
         link: mostCommonA.protein
-          ? `${searchBaseUrl}${mostCommonA.protein}`
+          ? `${salivaryProteomeBaseUrl}${encodeURIComponent(
+              mostCommonA.protein
+            )}`
           : "",
         data: uniqueA,
       },
@@ -54,7 +59,9 @@ document.addEventListener("DOMContentLoaded", function () {
         sets: ["B"],
         size: uniqueB.length,
         link: mostCommonB.protein
-          ? `${searchBaseUrl}${mostCommonB.protein}`
+          ? `${salivaryProteomeBaseUrl}${encodeURIComponent(
+              mostCommonB.protein
+            )}`
           : "",
         data: uniqueB,
       },
@@ -62,7 +69,9 @@ document.addEventListener("DOMContentLoaded", function () {
         sets: ["A", "B"],
         size: commonAB.length,
         link: mostCommonAB.protein
-          ? `${searchBaseUrl}${mostCommonAB.protein}`
+          ? `${salivaryProteomeBaseUrl}${encodeURIComponent(
+              mostCommonAB.protein
+            )}`
           : "",
         data: commonAB,
       },
@@ -73,13 +82,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const chart = d3.select("#venDiagram").datum(sets).call(vennDiagram);
 
-    // Add interactivity
-    const tooltip = d3.select("#tooltip");
+    // Select the tooltip element
+    const tooltip = d3.select("#tooltip-venn");
 
     chart
       .selectAll("path")
       .attr("class", "venn-circle")
       .on("mouseover", function (event, d) {
+        console.log("Mouseover event triggered"); // Debug log
         const selection = d3.select(this).transition("tooltip").duration(400);
         selection.style("fill-opacity", 0.8);
         tooltip.transition().duration(400).style("display", "block");
@@ -99,16 +109,19 @@ document.addEventListener("DOMContentLoaded", function () {
                   `);
       })
       .on("mousemove", function (event) {
+        console.log("Mousemove event triggered"); // Debug log
         tooltip
           .style("left", event.pageX + 15 + "px")
           .style("top", event.pageY - 28 + "px");
       })
       .on("mouseout", function () {
+        console.log("Mouseout event triggered"); // Debug log
         const selection = d3.select(this).transition("tooltip").duration(400);
         selection.style("fill-opacity", 0.5);
         tooltip.transition().duration(400).style("display", "none");
       })
       .on("click", function (event, d) {
+        console.log("Click event triggered"); // Debug log
         if (d.link) {
           window.open(d.link, "_blank");
         }

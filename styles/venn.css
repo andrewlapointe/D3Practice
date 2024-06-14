@@ -1,0 +1,40 @@
+body {
+  font-family: "Arial", sans-serif;
+}
+
+#venDiagram {
+  display: block;
+  margin-top: 20px;
+  text-align: left; /* Left-align the text */
+  padding-left: 20px; /* Optional padding for better spacing */
+}
+
+.venn-circle {
+  stroke: #000;
+  stroke-width: 1px;
+  fill-opacity: 0.5;
+}
+
+.venn-label {
+  font-size: 20px;
+  font-weight: bold; /* Make text bold */
+  fill: #000; /* Make text black */
+}
+
+.venn-label-A {
+  font-size: 24px; /* Specific font size for A */
+}
+
+.venn-label-B {
+  font-size: 24px; /* Specific font size for B */
+}
+
+#tooltip-venn {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  display: none;
+  pointer-events: none;
+  z-index: 9999; /* High z-index */
+}
