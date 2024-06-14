@@ -1,9 +1,10 @@
 import "./volcanoplot.css";
 import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
+import data from "../../data/volcano.csv";
 
-const VolcanoPlot = ({ dataUrl }) => {
-  const chartRef = useRef(null);
+const VolcanoPlot = () => {
+  const chartRef = useRef();
 
   useEffect(() => {
     const SVGwidth = chartRef.current.offsetWidth * 0.8;
@@ -15,6 +16,18 @@ const VolcanoPlot = ({ dataUrl }) => {
     const xScale = d3.scaleLinear().range([0, innerWidth]).domain([-8, 8]);
     const yScale = d3.scaleLinear().range([innerHeight, 0]).domain([-1, 20]);
 
+    const xAxis = d3.axisBottom(xScale);
+    const yAxis = d3.axisLeft(yScale);
+
+    // zoom = d3
+    //   .zoom()
+    //   .scaleExtent([1, 2000])
+    //   .translateExtent([
+    //     [0, 0],
+    //     [width, height],
+    //   ])
+    //   .on("zoom", zoomFunction);
+
     const svg = d3
       .select(chartRef.current)
       .append("svg")
@@ -22,6 +35,7 @@ const VolcanoPlot = ({ dataUrl }) => {
       .attr("height", SVGheight)
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
+    // .call(zoom);
 
     svg
       .append("defs")
@@ -31,23 +45,22 @@ const VolcanoPlot = ({ dataUrl }) => {
       .attr("width", innerWidth)
       .attr("height", innerHeight);
 
-    const xAxis = d3.axisBottom(xScale);
-    const yAxis = d3.axisLeft(yScale);
-
     const gX = svg
       .append("g")
       .attr("class", "x axis")
       .attr("transform", `translate(0,${innerHeight})`)
       .call(xAxis);
 
+    const gY = svg.append("g").attr("class", "y axis").call(yAxis);
+
+    //add x axis label
     gX.append("text")
       .attr("class", "label")
       .attr("transform", `translate(${innerWidth / 2},${margin.bottom - 6})`)
       .attr("text-anchor", "middle")
       .text("log₂(Fold-change)");
 
-    const gY = svg.append("g").attr("class", "y axis").call(yAxis);
-
+    //add y axis label
     gY.append("text")
       .attr("class", "label")
       .attr(
@@ -59,8 +72,7 @@ const VolcanoPlot = ({ dataUrl }) => {
 
     const tooltip = d3.select("body").append("div").attr("class", "tooltip");
 
-    d3.csv(dataUrl, parser).then((data) => {
-      console.log(JSON.stringify(data));
+    d3.csv(data, parser).then((data) => {
       svg
         .selectAll(".dot")
         .data(data)
@@ -89,7 +101,13 @@ const VolcanoPlot = ({ dataUrl }) => {
         })
         .on("mouseleave", function () {
           tooltip.style("visibility", "hidden");
-        });
+        })
+        .on(
+          "click",
+          (_, d) =>
+            window.open("https://salivaryproteome.org/protein/" + d[""]),
+          "_blank"
+        );
 
       const legendDict = {
         1: ["DOWN", "Blue"],
@@ -145,35 +163,17 @@ const VolcanoPlot = ({ dataUrl }) => {
       .attr("class", "y grid")
       .call(make_y_gridlines().tickSize(-innerWidth).tickFormat(""));
 
-    var zoomBox = svg
+    svg
       .append("rect")
       .attr("class", "zoom")
       .attr("height", innerHeight)
       .attr("width", innerWidth);
 
-    var circles = svg.append("g").attr("class", "circlesContainer");
-
-    // circles
-    //   .selectAll(".dot")
-    //   .data(dataUrl)
-    //   .enter()
-    //   .append("circle")
-    //   .attr("r", 3)
-    //   .attr("cx", (d) => xScale(d[xColumn]))
-    //   .attr("cy", (d) => yScale(d[yColumn]))
-    //   .attr("class", circleClass)
-    //   .on("mouseenter", tipEnter)
-    //   .on("mousemove", tipMove)
-    //   .on("mouseleave", () => tooltip.style("visibility", "hidden"))
-    //   .on(
-    //     "click",
-    //     (_, d) => window.open("https://salivaryproteome.org/protein/" + d[""]),
-    //     "_blank"
-    //   );
+    // var circles = svg.append("g").attr("class", "circlesContainer");
 
     var thresholdLines = svg.append("g").attr("class", "thresholdLines");
 
-    // add horizontal line at y = 1
+    // add horizontal line at x = -1, 1 and vertical lines at y= -1, 1
     [-1, 1].forEach(function (threshold) {
       thresholdLines
         .append("svg:line")
@@ -182,25 +182,15 @@ const VolcanoPlot = ({ dataUrl }) => {
         .attr("x2", innerWidth)
         .attr("y1", yScale(threshold))
         .attr("y2", yScale(threshold));
+
+      thresholdLines
+        .append("svg:line")
+        .attr("class", "threshold")
+        .attr("x1", xScale(threshold))
+        .attr("x2", xScale(threshold))
+        .attr("y1", 0)
+        .attr("y2", innerHeight);
     });
-
-    // add vertical line at x = 1
-    thresholdLines
-      .append("svg:line")
-      .attr("class", "threshold")
-      .attr("x1", xScale(1))
-      .attr("x2", xScale(1))
-      .attr("y1", 0)
-      .attr("y2", innerHeight);
-
-    // add vertical line at x = -1
-    thresholdLines
-      .append("svg:line")
-      .attr("class", "threshold")
-      .attr("x1", xScale(-1))
-      .attr("x2", xScale(-1))
-      .attr("y1", 0)
-      .attr("y2", innerHeight);
 
     function createLegend(selection, legendDict) {
       const legend = selection
@@ -287,7 +277,7 @@ const VolcanoPlot = ({ dataUrl }) => {
       d3.select(chartRef.current).selectAll("*").remove();
       tooltip.remove();
     };
-  }, [dataUrl]);
+  });
 
   return <div ref={chartRef} id="chart"></div>;
 };
