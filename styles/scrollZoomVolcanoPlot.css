@@ -1,85 +1,84 @@
 body {
-    font-family: 'Noto Sans', sans-serif;
+  font-family: "Noto Sans", sans-serif;
 }
 
 .axis path,
 .tick line,
 .tick text {
-    stroke: #000000;
-    stroke-width: 0.5px;
-    stroke-opacity: 0.5;
+  stroke: #000000;
+  stroke-width: 0.5px;
+  stroke-opacity: 0.5;
 }
 
 .tick text {
-    fill: #000000;
+  fill: #000000;
 }
 
 .label {
-    fill: #000000;
-    font-weight: 700;
-    font-size: 12px;
+  fill: #000000;
+  font-weight: 700;
+  font-size: 12px;
 }
 
 /* Significance threshold line */
 .threshold {
-    stroke: #000000;
-    stroke-dasharray: 5px 10px;
-    stroke-opacity: 0.9;
+  stroke: #000000;
+  stroke-dasharray: 5px 10px;
+  stroke-opacity: 0.9;
 }
 
 .dot {
-    /*pointer-events: all;*/
-    fill: #000000;
-    stroke: none;
-    opacity: 0.4;
+  /*pointer-events: all;*/
+  fill: #000000;
+  stroke: none;
+  opacity: 0.4;
 }
 
 .dot.sig {
-    fill: red;
+  fill: red;
 }
 
 .dot.fold {
-    fill: rgb(30, 255, 0);
+  fill: rgb(30, 255, 0);
 }
 
 .dot.sigfold {
-    fill: blue;
-
+  fill: blue;
 }
 
 .zoom {
-    cursor: move;
-    fill: none;
-    pointer-events: all;
+  cursor: move;
+  fill: none;
+  pointer-events: all;
 }
 
 /*Add clip path for dots and threshold lines to ensure they arent drawn if outside the clip box*/
 .circlesContainer {
-    clip-path: url(#clip);
+  clip-path: url(#clip);
 }
 
 .thresholdLines {
-    clip-path: url(#clip);
+  clip-path: url(#clip);
 }
 
-.tooltip {
-    position: absolute;
-    z-index: 10;
-    background-color: #000;
-    color: #fff;
-    padding: 2px 7px;
-    visibility: hidden;
-    opacity: 0.75;
-    border-radius: 3px;
+.tooltipvolcano {
+  position: absolute;
+  z-index: 10;
+  background-color: #000;
+  color: #fff;
+  padding: 2px 7px;
+  visibility: hidden;
+  opacity: 0.75;
+  border-radius: 3px;
 }
 
-.tooltip::after {
-    content: " ";
-    position: absolute;
-    top: 14%;
-    right: 100%; /* To the left of the tooltip */
-    margin-top: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: transparent #000 transparent transparent;
+.tooltipvolcano::after {
+  content: " ";
+  position: absolute;
+  top: 14%;
+  right: 100%; /* To the left of the tooltip */
+  margin-top: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent #000 transparent transparent;
 }
