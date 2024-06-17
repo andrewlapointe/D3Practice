@@ -1,7 +1,7 @@
 import "./volcanoplot.css";
 import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
-import data from "../../data/volcano.csv";
+import data from "../../data/volcano.csv"; // static data import
 
 const VolcanoPlot = () => {
   const chartRef = useRef(null);
@@ -13,9 +13,11 @@ const VolcanoPlot = () => {
     const innerWidth = SVGwidth - margin.left - margin.right;
     const innerHeight = SVGheight - margin.top - margin.bottom;
 
+    // Setting up scales for x and y axis
     const xScale = d3.scaleLinear().range([0, innerWidth]).domain([-8, 8]);
     const yScale = d3.scaleLinear().range([innerHeight, 0]).domain([-1, 20]);
 
+    // Creating the SVG container
     const svg = d3
       .select(chartRef.current)
       .append("svg")
@@ -24,6 +26,7 @@ const VolcanoPlot = () => {
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
+    // Defining the clip path to restrict drawing within the chart area
     svg
       .append("defs")
       .append("clipPath")
@@ -32,23 +35,28 @@ const VolcanoPlot = () => {
       .attr("width", innerWidth)
       .attr("height", innerHeight);
 
+    // Instantiating x and y axis
     const xAxis = d3.axisBottom(xScale);
     const yAxis = d3.axisLeft(yScale);
 
+    // Setting up x axis
     const gX = svg
       .append("g")
       .attr("class", "x axis")
       .attr("transform", `translate(0,${innerHeight})`)
       .call(xAxis);
 
+    // Labeling x axis
     gX.append("text")
       .attr("class", "label")
       .attr("transform", `translate(${innerWidth / 2},${margin.bottom - 6})`)
       .attr("text-anchor", "middle")
       .text("log₂(Fold-change)");
 
+    // Setting up y axis
     const gY = svg.append("g").attr("class", "y axis").call(yAxis);
 
+    // Labeling y axis
     gY.append("text")
       .attr("class", "label")
       .attr(
@@ -58,8 +66,10 @@ const VolcanoPlot = () => {
       .attr("text-anchor", "middle")
       .text("-log₁₀(p-value)");
 
+    // Instantiating the tooltip
     const tooltip = d3.select("body").append("div").attr("class", "tooltip");
 
+    // Loading and parsing given data
     d3.csv(data, parser).then((data) => {
       svg
         .selectAll(".dot")
@@ -117,6 +127,7 @@ const VolcanoPlot = () => {
       svg.call(zoom);
     });
 
+    // Function to determine the class of a circle
     function circleClass(d) {
       if (d["-log10(p)"] <= 1) {
         return "dot";
@@ -129,28 +140,25 @@ const VolcanoPlot = () => {
       }
     }
 
-    // add gridlines
+    // Instantiate gridlines
     var gridLines = svg.append("g").attr("class", "grid");
 
-    function make_x_gridlines() {
-      return d3.axisBottom(xScale).ticks(10);
-    }
-
-    function make_y_gridlines() {
-      return d3.axisLeft(yScale).ticks(10);
-    }
-
+    // Setup horizontal grid lines
     gridLines
       .append("g")
       .attr("class", "x grid")
       .attr("transform", "translate(0," + innerHeight + ")")
-      .call(make_x_gridlines().tickSize(-innerHeight).tickFormat(""));
+      .call(
+        d3.axisBottom(xScale).ticks(10).tickSize(-innerHeight).tickFormat("")
+      );
 
+    // Setup vertical grid lines
     gridLines
       .append("g")
       .attr("class", "y grid")
-      .call(make_y_gridlines().tickSize(-innerWidth).tickFormat(""));
+      .call(d3.axisLeft(yScale).ticks(10).tickSize(-innerWidth).tickFormat(""));
 
+    // Creates a rectangle that allows zooming to be done anywhere on the chart
     svg
       .append("rect")
       .attr("class", "zoom")
@@ -159,7 +167,8 @@ const VolcanoPlot = () => {
 
     // var circles = svg.append("g").attr("class", "circlesContainer");
 
-    var thresholdLines = svg.append("g").attr("class", "thresholdLines");
+    // Instantiates thresholds seperating circles by class
+    const thresholdLines = svg.append("g").attr("class", "thresholdLines");
 
     // add horizontal line at x = -1, 1 and vertical lines at y= -1, 1
     [-1, 1].forEach(function (threshold) {
@@ -180,6 +189,7 @@ const VolcanoPlot = () => {
         .attr("y2", innerHeight);
     });
 
+    // Function for creatig a legend to be attached to a chart
     function createLegend(selection, legendDict) {
       const legend = selection
         .append("g")
@@ -214,6 +224,7 @@ const VolcanoPlot = () => {
         .text((d) => d.label);
     }
 
+    // Function that creates zooming functionality by changing the chart
     function zoomFunction(event) {
       const transform = event.transform;
       svg
@@ -257,6 +268,7 @@ const VolcanoPlot = () => {
       return d;
     }
 
+    //
     function numberParser(value) {
       return +value ? +value : value;
     }
@@ -265,7 +277,7 @@ const VolcanoPlot = () => {
       d3.select(chartRef.current).selectAll("*").remove();
       tooltip.remove();
     };
-  });
+  }, []);
 
   return <div ref={chartRef} id="chart"></div>;
 };
