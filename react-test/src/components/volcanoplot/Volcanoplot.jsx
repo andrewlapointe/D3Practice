@@ -75,7 +75,10 @@ const VolcanoPlot = () => {
         xValKey = datakeys[2],
         yValKey = datakeys[4];
 
-      svg
+      // bounds points to clip path
+      const circleGroup = svg.append("g").attr("clip-path", "url(#clip)");
+
+      circleGroup
         .selectAll(".dot")
         .data(data)
         .enter()
