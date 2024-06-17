@@ -95,7 +95,7 @@ function createScatterPlot(
       .attr("class", "tooltipvolcano");
 
     function tipEnter(_, d) {
-      console.log(JSON.stringify(d));
+      // console.log(JSON.stringify(d));
       tooltip
         .style("visibility", "visible")
         .style("font-size", "11px")
