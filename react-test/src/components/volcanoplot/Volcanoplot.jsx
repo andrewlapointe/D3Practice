@@ -71,6 +71,10 @@ const VolcanoPlot = () => {
 
     // Loading and parsing given data
     d3.csv(data, parser).then((data) => {
+      var datakeys = Object.keys(data[0]),
+        xValKey = datakeys[2],
+        yValKey = datakeys[4];
+
       svg
         .selectAll(".dot")
         .data(data)
@@ -78,19 +82,17 @@ const VolcanoPlot = () => {
         .append("circle")
         .attr("class", circleClass)
         .attr("r", 3)
-        .attr("cx", (d) => xScale(d["log2(FC)"]))
-        .attr("cy", (d) => yScale(d["-log10(p)"]))
+        .attr("cx", (d) => xScale(d[xValKey]))
+        .attr("cy", (d) => yScale(d[yValKey]))
         .on("mouseenter", function (event, d) {
           tooltip.style(
             "visibility",
             "visible"
-          ).html(`<strong>Primary Accession</strong>: ${d[""]}<br/>
-                   <strong>FC</strong>: ${d["FC"]}<br/>
-                   <strong>log2(FC)</strong>: ${d3.format(".2f")(
-                     d["log2(FC)"]
-                   )}<br/>
-                   <strong>Raw PVal</strong>: ${d["raw.pval"]}<br/>
-                   <strong>-log10(p)</strong>: ${d["-log10(p)"]}`);
+          ).html(`<strong>Primary Accession</strong>: ${d[datakeys[0]]}<br/>
+                   <strong>${datakeys[1]}</strong>: ${d[datakeys[1]]}<br/>
+                   <strong>${xValKey}</strong>: ${d3.format(".2f")(d[xValKey])}<br/>
+                   <strong>${datakeys[3]}</strong>: ${d[datakeys[3]]}<br/>
+                   <strong>${yValKey}</strong>: ${d[yValKey]}`);
         })
         .on("mousemove", function (event) {
           tooltip
