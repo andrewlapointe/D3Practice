@@ -29,7 +29,7 @@ body {
 
 .dot {
   /*pointer-events: all;*/
-  fill: #9c4747;
+  fill: #727272;
   stroke: none;
   opacity: 0.4;
   &.sig {
