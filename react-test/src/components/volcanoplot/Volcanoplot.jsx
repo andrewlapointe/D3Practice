@@ -3,7 +3,15 @@ import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
 import data from "../../data/all_data.tsv"; // static data import
 
-const VolcanoPlot = ({ pval = 0.5, xCol = 3, yCol = 4 }) => {
+const VolcanoPlot = ({
+  foldChange = 2,
+  pval = 0.05,
+  xCol = 3,
+  yCol = 4,
+  details = [],
+  xlabel = "",
+  ylabel = "",
+}) => {
   const chartRef = useRef(null);
 
   useEffect(() => {
@@ -42,13 +50,16 @@ const VolcanoPlot = ({ pval = 0.5, xCol = 3, yCol = 4 }) => {
 
       // Determine the dynamic scales based on the data
       const xExtent = d3.extent(data, (d) => d[xValKey] * 1.1);
-      const yExtent = d3.extent(data, (d) => d[yValKey] * 1.1);
+      const yExtent = d3.extent(data, (d) => d[yValKey] * 1.25);
 
-      const xScale = d3.scaleLinear().range([0, innerWidth]).domain(xExtent);
+      const xScale = d3
+        .scaleLinear()
+        .range([0, innerWidth])
+        .domain([-0.1 * xExtent[1] + xExtent[0], xExtent[1]]);
       const yScale = d3
         .scaleLinear()
         .range([innerHeight, 0])
-        .domain([0, yExtent[1]]);
+        .domain([-0.1 * yExtent[1] + yExtent[0], yExtent[1]]);
 
       // Instantiating x and y axis
       const xAxis = d3.axisBottom(xScale);
@@ -66,7 +77,7 @@ const VolcanoPlot = ({ pval = 0.5, xCol = 3, yCol = 4 }) => {
         .attr("class", "label")
         .attr("transform", `translate(${innerWidth / 2},${margin.bottom - 6})`)
         .attr("text-anchor", "middle")
-        .text(xValKey);
+        .text(xlabel === "" ? xValKey : xlabel);
 
       // Setting up y axis
       const gY = svg.append("g").attr("class", "y axis").call(yAxis);
@@ -79,7 +90,7 @@ const VolcanoPlot = ({ pval = 0.5, xCol = 3, yCol = 4 }) => {
           `translate(${-margin.left / 1.25},${innerHeight / 2}) rotate(-90)`
         )
         .attr("text-anchor", "middle")
-        .text(yValKey);
+        .text(ylabel === "" ? yValKey : ylabel);
       // Instantiate gridlines
       var gridLines = svg.append("g").attr("class", "grid");
 
@@ -110,7 +121,7 @@ const VolcanoPlot = ({ pval = 0.5, xCol = 3, yCol = 4 }) => {
       // Instantiates thresholds separating circles by class
       const thresholdLines = svg.append("g").attr("class", "thresholdLines");
 
-      // add horizontal line at x = -pval, pval and vertical lines at y= -pval, pval
+      // add horizontal lines at y= -pval, pval
       [-pval, pval].forEach(function (threshold) {
         thresholdLines
           .append("svg:line")
@@ -119,7 +130,10 @@ const VolcanoPlot = ({ pval = 0.5, xCol = 3, yCol = 4 }) => {
           .attr("x2", innerWidth)
           .attr("y1", yScale(threshold))
           .attr("y2", yScale(threshold));
+      });
 
+      // add vertical lines at x = -foldChange, foldChange
+      [-foldChange, foldChange].forEach(function (threshold) {
         thresholdLines
           .append("svg:line")
           .attr("class", "threshold")
@@ -142,14 +156,12 @@ const VolcanoPlot = ({ pval = 0.5, xCol = 3, yCol = 4 }) => {
         .attr("cx", (d) => xScale(d[xValKey]))
         .attr("cy", (d) => yScale(d[yValKey]))
         .on("mouseenter", function (event, d) {
-          tooltip.style(
-            "visibility",
-            "visible"
-          ).html(`<strong>Primary Accession</strong>: ${d[datakeys[0]]}<br/>
-                   <strong>${datakeys[4]}</strong>: ${d[datakeys[4]]}<br/>
-                   <strong>${xValKey}</strong>: ${d3.format(".2f")(d[xValKey])}<br/>
-                   <strong>${datakeys[7]}</strong>: ${d[datakeys[7]]}<br/>
-                   <strong>${yValKey}</strong>: ${d[yValKey]}`);
+          tooltip.style("visibility", "visible").html(tooltipDetails(d));
+          // `<strong>Primary Accession</strong>: ${d[datakeys[0]]}<br/>
+          //        <strong>${datakeys[4]}</strong>: ${d[datakeys[4]]}<br/>
+          //        <strong>${xValKey}</strong>: ${d3.format(".2f")(d[xValKey])}<br/>
+          //        <strong>${datakeys[7]}</strong>: ${d[datakeys[7]]}<br/>
+          //        <strong>${yValKey}</strong>: ${d[yValKey]}`);
         })
         .on("mousemove", function (event) {
           tooltip
@@ -218,6 +230,18 @@ const VolcanoPlot = ({ pval = 0.5, xCol = 3, yCol = 4 }) => {
               .scale(transform.rescaleY(yScale))
           );
       }
+
+      function tooltipDetails(d) {
+        var output = `<strong>Primary Accession</strong>: ${d[datakeys[0]]}`;
+        details.forEach(
+          (detail) =>
+            (output = output.concat(
+              `<br/><strong>${detail}</strong>: ${d[detail]}`
+            ))
+        );
+        return output;
+      }
+
       function circleClass(d) {
         if (d[yValKey] <= pval) {
           return "dot";
