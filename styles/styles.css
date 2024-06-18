@@ -50,3 +50,44 @@ section {
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 10px;
 }
+
+#zoom-slider-container {
+  /* position: absolute; */
+  width: 40%;
+  margin: 0 auto;
+  display: block;
+}
+
+/* #zoom-slider {
+} */
+
+.sleek-slider {
+  -webkit-appearance: none; /* Override default CSS styles */
+  appearance: none;
+  width: 100%; /* Full-width */
+  height: 8px; /* Specified height */
+  background: #ddd; /* Darker grey for higher contrast */
+  outline: none; /* Remove outline */
+  opacity: 0.7; /* Partial transparency */
+  transition: opacity 0.2s; /* Smooth transitions */
+  border-radius: 4px; /* Rounded ends */
+}
+
+/* .sleek-slider:hover {
+  opacity: 1;
+} 
+*/
+
+.sleek-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  fill: #333;
+  width: 6px; /* Effective width */
+  height: 6px; /* Effective height */
+}
+
+.sleek-slider::-moz-range-thumb {
+  width: 6px; /* Effective width */
+  height: 6px; /* Effective height */
+  background-color: #333;
+}
