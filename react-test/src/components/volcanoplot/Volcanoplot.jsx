@@ -121,16 +121,14 @@ const VolcanoPlot = ({
       // Instantiates thresholds separating circles by class
       const thresholdLines = svg.append("g").attr("class", "thresholdLines");
 
-      // add horizontal lines at y= -pval, pval
-      [-pval, pval].forEach(function (threshold) {
-        thresholdLines
-          .append("svg:line")
-          .attr("class", "threshold")
-          .attr("x1", 0)
-          .attr("x2", innerWidth)
-          .attr("y1", yScale(threshold))
-          .attr("y2", yScale(threshold));
-      });
+      // add horizontal lines at y= pval
+      thresholdLines
+        .append("svg:line")
+        .attr("class", "threshold")
+        .attr("x1", 0)
+        .attr("x2", innerWidth)
+        .attr("y1", yScale(pval))
+        .attr("y2", yScale(pval));
 
       // add vertical lines at x = -foldChange, foldChange
       [-foldChange, foldChange].forEach(function (threshold) {
@@ -152,16 +150,11 @@ const VolcanoPlot = ({
         .enter()
         .append("circle")
         .attr("class", circleClass)
-        .attr("r", 3)
+        .attr("r", 4)
         .attr("cx", (d) => xScale(d[xValKey]))
         .attr("cy", (d) => yScale(d[yValKey]))
         .on("mouseenter", function (event, d) {
           tooltip.style("visibility", "visible").html(tooltipDetails(d));
-          // `<strong>Primary Accession</strong>: ${d[datakeys[0]]}<br/>
-          //        <strong>${datakeys[4]}</strong>: ${d[datakeys[4]]}<br/>
-          //        <strong>${xValKey}</strong>: ${d3.format(".2f")(d[xValKey])}<br/>
-          //        <strong>${datakeys[7]}</strong>: ${d[datakeys[7]]}<br/>
-          //        <strong>${yValKey}</strong>: ${d[yValKey]}`);
         })
         .on("mousemove", function (event) {
           tooltip
@@ -202,7 +195,7 @@ const VolcanoPlot = ({
         svg
           .selectAll(".dot")
           .attr("transform", transform)
-          .attr("r", 3 / Math.sqrt(transform.k));
+          .attr("r", 4 / Math.sqrt(transform.k));
         gX.call(xAxis.scale(transform.rescaleX(xScale)));
         gY.call(yAxis.scale(transform.rescaleY(yScale)));
         svg
@@ -231,6 +224,7 @@ const VolcanoPlot = ({
           );
       }
 
+      // Function that dynamically creates a tooltip for a circle
       function tooltipDetails(d) {
         var output = `<strong>Primary Accession</strong>: ${d[datakeys[0]]}`;
         details.forEach(
@@ -245,9 +239,9 @@ const VolcanoPlot = ({
       function circleClass(d) {
         if (d[yValKey] <= pval) {
           return "dot";
-        } else if (d[yValKey] > pval && d[xValKey] <= -pval) {
+        } else if (d[yValKey] > pval && d[xValKey] <= -foldChange) {
           return "dot sigfold";
-        } else if (d[yValKey] > pval && d[xValKey] >= pval) {
+        } else if (d[yValKey] > pval && d[xValKey] >= foldChange) {
           return "dot sig";
         } else {
           return "dot";
