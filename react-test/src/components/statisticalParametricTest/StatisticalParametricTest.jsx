@@ -77,7 +77,7 @@ const ScatterPlot = () => {
       )
       .append("g")
       .attr("transform", `translate(${margin.left}, ${margin.top})`);
-
+    svg.node().addEventListener("wheel", (event) => event.preventDefault());
     // Append slider in the container for better layout control
     const slider = parentContainer
       .append("div")
