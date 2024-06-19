@@ -1,13 +1,16 @@
 import "./App.css";
 import VolcanoPlot from "./components/volcanoplot/Volcanoplot";
+import data from "./data/all_data.tsv"; // static data import
+import data2 from "./data/volcano.csv";
 
 function App() {
   return (
     <div className="App">
       <h1>Volcano Plot</h1>
       <VolcanoPlot
-        pval={-Math.log(10) / Math.log(0.05)}
-        foldChange={Math.log(2) / Math.log(2)}
+        data={data}
+        pval={0.05}
+        foldChange={2}
         xCol={8}
         yCol={5}
         details={["p.value", "Fold.Change"]}

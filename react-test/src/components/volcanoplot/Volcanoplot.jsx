@@ -1,9 +1,9 @@
 import "./volcanoplot.css";
 import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
-import data from "../../data/all_data.tsv"; // static data import
 
 const VolcanoPlot = ({
+  data = "",
   foldChange = 2,
   pval = 0.05,
   xCol = 3,
@@ -12,6 +12,8 @@ const VolcanoPlot = ({
   xlabel = "",
   ylabel = "",
 }) => {
+  pval = -Math.log(10) / Math.log(pval);
+  foldChange = Math.log(2) / Math.log(foldChange);
   const chartRef = useRef(null);
 
   useEffect(() => {
@@ -42,8 +44,21 @@ const VolcanoPlot = ({
     // Instantiating the tooltip
     const tooltip = d3.select("body").append("div").attr("class", "tooltip");
 
+    const loadData = () => {
+      if (data === "") {
+        return () => {};
+      }
+      const extension = data.split(".").pop().toLowerCase();
+      if (extension === "tsv") {
+        return d3.tsv(data, parser);
+      }
+      return d3.csv(data, parser);
+    };
+
     // Loading and parsing given data
-    d3.tsv(data, parser).then((data) => {
+    loadData().then((data) => {
+      // console.log(data.split(".").pop().toLowerCase());
+      console.log(data);
       var datakeys = Object.keys(data[0]),
         xValKey = datakeys[xCol],
         yValKey = datakeys[yCol];
