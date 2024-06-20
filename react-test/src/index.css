@@ -27,3 +27,54 @@ section {
   padding-right: 3.5em;
   border-radius: 8px;
 }
+
+.tooltip {
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 3px;
+  padding: 5px;
+  position: absolute;
+  pointer-events: none;
+  font-size: 12px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+body {
+  padding: 20px;
+  background-color: #f5f5f5; /* Light grey background */
+  font-family: Arial, sans-serif;
+}
+
+.sleek-slider {
+  -webkit-appearance: none; /* Override default CSS styles */
+  appearance: none;
+  width: 100%; /* Full-width */
+  height: 8px; /* Specified height */
+  background: #777; /* Darker grey for higher contrast */
+  outline: none; /* Remove outline */
+  opacity: 0.7; /* Partial transparency */
+  transition: opacity 0.2s; /* Smooth transitions */
+  border-radius: 4px; /* Rounded ends */
+}
+
+.sleek-slider:hover {
+  opacity: 1; /* Fully opaque on hover */
+  visibility: visible;
+}
+
+.sleek-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 8px; /* Same as slider height */
+  height: 8px; /* Same as slider height */
+  border-radius: 50%; /* Makes the thumb circular */
+  background: #fff; /* White thumb for contrast */
+  cursor: pointer; /* Cursor appears as pointer */
+}
+
+.sleek-slider::-moz-range-thumb {
+  width: 8px; /* Same as slider height */
+  height: 8px; /* Same as slider height */
+  border-radius: 50%; /* Makes the thumb circular */
+  background: #fff; /* White thumb for contrast */
+  cursor: pointer; /* Cursor appears as pointer */
+}

@@ -10,9 +10,9 @@ const ScatterPlot = () => {
     height: 400,
     margin: { top: 10, right: 30, bottom: 50, left: 70 },
     pointRadius: 3,
-    xAxisLabel: "xAxis",
-    yAxisLabel: "yAxis",
-    xValue: (d) => d["FDR"],
+    xAxisLabel: "",
+    yAxisLabel: "-log10(p)",
+    xValue: (d, i) => i,
     yValue: (d) => d["-log10(p)"],
     circleClass: (d) => {
       if (d.y <= 1) {
@@ -77,6 +77,16 @@ const ScatterPlot = () => {
       )
       .append("g")
       .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+    const clipPath = svg
+      .append("clipPath")
+      .attr("id", "clipRect")
+      .append("rect")
+      .attr("width", width)
+      .attr("height", height)
+      .attr("x", 0)
+      .attr("y", 0);
+
     svg.node().addEventListener("wheel", (event) => event.preventDefault());
     // Append slider in the container for better layout control
     const slider = parentContainer
@@ -90,7 +100,7 @@ const ScatterPlot = () => {
       .attr("max", "20")
       .attr("step", "0.1")
       .attr("value", "1")
-      .style("width", "80%");
+      .style("width", "50%");
 
     document.getElementById("zoom-slider").disabled = true;
     const xScale = d3.scaleLinear().range([0, width]);
@@ -109,7 +119,7 @@ const ScatterPlot = () => {
     const data = await d3.csv(dataFile, parseData);
     console.log("HERERWELSRJSLJFRLSEJKF");
     console.log(data);
-    xScale.domain([0, d3.max(data, xValue)]);
+    xScale.domain([0, 600]);
     yScale.domain([0, d3.max(data, yValue)]);
 
     xAxis
@@ -151,7 +161,7 @@ const ScatterPlot = () => {
         yAxis.call(d3.axisLeft(zy));
         svg
           .selectAll("circle")
-          .attr("cx", (d) => zx(xValue(d)))
+          .attr("cx", (d, i) => zx(xValue(d, i)))
           .attr("cy", (d) => zy(yValue(d)));
         // Sync zoom level to the slider
         document.getElementById("zoom-slider").value = event.transform.k;
@@ -159,12 +169,19 @@ const ScatterPlot = () => {
 
     svg.call(zoom);
 
-    const pltPoints = svg
+    const pltPointsGroup = svg
+      .append("g")
+      .attr("id", "points-group")
+      .attr("clip-path", "url(#clipRect)")
+      .attr("height", height)
+      .attr("width", width);
+
+    const pltPoints = pltPointsGroup
       .selectAll(".dot")
       .data(data)
       .enter()
       .append("circle")
-      .attr("cx", (d) => xScale(xValue(d)))
+      .attr("cx", (d, i) => xScale(xValue(d, i)))
       .attr("cy", (d) => yScale(yValue(d)))
       .attr("r", pointRadius)
       .attr("class", circleClass)
@@ -178,7 +195,12 @@ const ScatterPlot = () => {
       })
       .on("mouseout", () => {
         tooltip.style("visibility", "hidden");
-      });
+      })
+      .on(
+        "click",
+        (_, d) => window.open("https://salivaryproteome.org/protein/" + d[""]),
+        "_blank"
+      );
   };
 
   const containerRef = useRef(null);
