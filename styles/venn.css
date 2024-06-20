@@ -17,7 +17,7 @@ body {
 
 .venn-label {
   font-size: 20px;
-  font-weight: bold; /* Make text bold */
+  font-weight: bold;
   fill: #000; /* Make text black */
 }
 
