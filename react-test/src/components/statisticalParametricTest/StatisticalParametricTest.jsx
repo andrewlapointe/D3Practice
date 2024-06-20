@@ -195,7 +195,12 @@ const ScatterPlot = () => {
       })
       .on("mouseout", () => {
         tooltip.style("visibility", "hidden");
-      });
+      })
+      .on(
+        "click",
+        (_, d) => window.open("https://salivaryproteome.org/protein/" + d[""]),
+        "_blank"
+      );
   };
 
   const containerRef = useRef(null);
