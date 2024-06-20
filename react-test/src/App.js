@@ -3,7 +3,7 @@ import VolcanoPlot from "./components/volcanoplot/Volcanoplot";
 import ScatterPlot from "./components/statisticalParametricTest/StatisticalParametricTest";
 import Navbar from "./components/navBar/Navbar.js";
 import data from "./data/all_data.tsv"; // static data import
-import data2 from "./data/volcano.csv";
+import VennDiagramComponent from "./components/vennDiagram/VennDiagram.js";
 
 function App() {
   return (
@@ -28,6 +28,10 @@ function App() {
         <section>
           <h1>Statistical Parametric Test</h1>
           <ScatterPlot />
+        </section>
+        <section id="venn-section">
+          <h2>Venn Diagram</h2>
+          <VennDiagramComponent />
         </section>
       </main>
     </div>

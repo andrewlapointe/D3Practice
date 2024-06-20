@@ -4,24 +4,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // Parse the data
     const parsedData = d3.dsvFormat("\t").parse(data);
 
-    // Helper function to get the most common protein and its count
-    function getMostCommonProtein(data, column) {
-      const proteinCounts = data.reduce((acc, d) => {
-        if (d[column] !== "NA") {
-          acc[d[column]] = (acc[d[column]] || 0) + 1;
-        }
-        return acc;
-      }, {});
-      const mostCommonProtein = Object.keys(proteinCounts).reduce(
-        (a, b) => (proteinCounts[a] > proteinCounts[b] ? a : b),
-        null
-      );
-      return {
-        protein: mostCommonProtein,
-        count: proteinCounts[mostCommonProtein] || 0,
-      };
-    }
-
     // Filter the data based on columns
     const commonAB = parsedData
       .filter((d) => d["Common A B"] !== "NA")
@@ -34,45 +16,35 @@ document.addEventListener("DOMContentLoaded", function () {
       .map((d) => d["Unique B"]);
 
     // Generate Google search links for the most common proteins
-    const searchBaseUrl = "https://www.google.com/search?q=";
-
-    // Get most common proteins and their links
-    const mostCommonA = getMostCommonProtein(parsedData, "Unique A");
-    const mostCommonB = getMostCommonProtein(parsedData, "Unique B");
-    const mostCommonAB = getMostCommonProtein(parsedData, "Common A B");
-
-    // Construct URLs for salivaryproteome.org
     const salivaryProteomeBaseUrl = "https://salivaryproteome.org/protein/";
 
+    // Prepare the sets for the Venn diagram
     const sets = [
       {
         sets: ["A"],
         size: uniqueA.length,
-        link: mostCommonA.protein
-          ? `${salivaryProteomeBaseUrl}${encodeURIComponent(
-              mostCommonA.protein
-            )}`
-          : "",
+        link:
+          uniqueA.length > 0
+            ? `${salivaryProteomeBaseUrl}${encodeURIComponent(uniqueA[0])}`
+            : "",
         data: uniqueA,
       },
       {
         sets: ["B"],
         size: uniqueB.length,
-        link: mostCommonB.protein
-          ? `${salivaryProteomeBaseUrl}${encodeURIComponent(
-              mostCommonB.protein
-            )}`
-          : "",
+        link:
+          uniqueB.length > 0
+            ? `${salivaryProteomeBaseUrl}${encodeURIComponent(uniqueB[0])}`
+            : "",
         data: uniqueB,
       },
       {
         sets: ["A", "B"],
         size: commonAB.length,
-        link: mostCommonAB.protein
-          ? `${salivaryProteomeBaseUrl}${encodeURIComponent(
-              mostCommonAB.protein
-            )}`
-          : "",
+        link:
+          commonAB.length > 0
+            ? `${salivaryProteomeBaseUrl}${encodeURIComponent(commonAB[0])}`
+            : "",
         data: commonAB,
       },
     ];
@@ -82,6 +54,38 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const chart = d3.select("#venDiagram").datum(sets).call(vennDiagram);
 
+    // Add text for set labels and sizes below each set
+    chart
+      .selectAll(".venn-circle text")
+      .attr("dy", function (d) {
+        if (d.sets.length === 1) {
+          return "1em";
+        } else {
+          return "-0.5em";
+        }
+      })
+      .text(function (d) {
+        return `${d.sets.join(" & ")} (${d.size})`;
+      })
+      .attr("class", function (d) {
+        if (d.sets.includes("A")) {
+          return "venn-label venn-label-A";
+        } else if (d.sets.includes("B")) {
+          return "venn-label venn-label-B";
+        } else {
+          return "venn-label";
+        }
+      });
+
+    // Add text for common area size within the common area
+    chart
+      .select(".venn-area.AB")
+      .select("text")
+      .attr("text-anchor", "middle")
+      .attr("dy", "0.35em") // Adjust vertical position if necessary
+      .text(`Common A B (${sets[2].size})`)
+      .attr("class", "venn-label venn-label-AB");
+
     // Select the tooltip element
     const tooltip = d3.select("#tooltip-venn");
 
@@ -89,53 +93,32 @@ document.addEventListener("DOMContentLoaded", function () {
       .selectAll("path")
       .attr("class", "venn-circle")
       .on("mouseover", function (event, d) {
-        console.log("Mouseover event triggered"); // Debug log
         const selection = d3.select(this).transition("tooltip").duration(400);
         selection.style("fill-opacity", 0.8);
         tooltip.transition().duration(400).style("display", "block");
 
         const sets = d.sets.join(" & ");
         const size = d.size;
-        const mostCommon = getMostCommonProtein(
-          parsedData,
-          sets === "A" ? "Unique A" : sets === "B" ? "Unique B" : "Common A B"
-        );
 
         tooltip.html(`
-                      Sets: ${sets}<br>
-                      Size: ${size}<br>
-                      Most Common Protein: ${mostCommon.protein || "None"}<br>
-                      Count: ${mostCommon.count}
-                  `);
+          Sets: ${sets}<br>
+          Size: ${size}
+        `);
       })
       .on("mousemove", function (event) {
-        console.log("Mousemove event triggered"); // Debug log
         tooltip
           .style("left", event.pageX + 15 + "px")
           .style("top", event.pageY - 28 + "px");
       })
       .on("mouseout", function () {
-        console.log("Mouseout event triggered"); // Debug log
         const selection = d3.select(this).transition("tooltip").duration(400);
         selection.style("fill-opacity", 0.5);
         tooltip.transition().duration(400).style("display", "none");
       })
       .on("click", function (event, d) {
-        console.log("Click event triggered"); // Debug log
         if (d.link) {
           window.open(d.link, "_blank");
         }
       });
-
-    // Modify the code where you create the Venn diagram labels
-    chart.selectAll("text").attr("class", function (d) {
-      if (d.sets.includes("A")) {
-        return "venn-label venn-label-A";
-      } else if (d.sets.includes("B")) {
-        return "venn-label venn-label-B";
-      } else {
-        return "venn-label";
-      }
-    });
   });
 });

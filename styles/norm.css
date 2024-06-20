@@ -1,0 +1,72 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+h1 {
+  text-align: center;
+}
+
+#chart {
+  width: 100%;
+  height: 500px;
+}
+
+#boxplots {
+  width: 100%;
+  height: 800px;
+  overflow-x: auto;
+}
+
+.tooltip {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+  pointer-events: none;
+  opacity: 0;
+}
+
+circle.point {
+  stroke: steelblue;
+  stroke-width: 2;
+  pointer-events: all;
+  cursor: pointer;
+}
+
+.box {
+  fill: white;
+  stroke: #000;
+  stroke-width: 1.5px;
+}
+
+.median {
+  stroke: red;
+  stroke-width: 1.5px;
+}
+
+.whisker,
+.min-line,
+.max-line {
+  stroke: #000;
+  stroke-width: 1.5px;
+}
+
+.axis--x path {
+  display: none;
+}
+
+.chart {
+  display: inline-block;
+  margin: 20px;
+}
+
+.chart svg {
+  border: 1px solid #ccc;
+}

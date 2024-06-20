@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="styles/styles.css" />
     <link rel="stylesheet" href="styles/scrollZoomVolcanoPlot.css" />
     <link rel="stylesheet" href="styles/venn.css" />
+    <link rel="stylesheet" href="styles/beforeNorm.css" />
+    <link rel="stylesheet" href="styles/norm.css" />
+
     <link
       href="https://fonts.googleapis.com/css?family=Noto+Sans:400,700"
       rel="stylesheet"
@@ -20,6 +23,8 @@
     <script defer src="./scripts/scoresPlt.js"></script>
     <script defer src="./scripts/statParaTest.js"></script>
     <script defer src="./scripts/venn.js"></script>
+    <script defer src="./scripts/beforeNorm.js"></script>
+    <script defer src="./scripts/norm.js"></script>
   </head>
   <body>
     <header>
@@ -33,7 +38,7 @@
       </nav>
     </header>
     <main>
-      <section id="chart">
+      <section id="volcanochart">
         <h2>Volcano Plot</h2>
         <p>Dynamic, Zoomable, etc.</p>
       </section>
@@ -49,6 +54,20 @@
       <section id="scoresPlot">
         <h2>Scores Plot</h2>
         <p>Data is currently missing</p>
+      </section>
+      <section id="bnormPlot">
+        <h2>Before Normalization Plot</h2>
+        <div class="beforeContainer"></div>
+        <p>Hoverable, Clickable</p>
+        <div id="beforeDensityChart"></div>
+        <div id="beforeBoxplots"></div>
+      </section>
+      <section id="normPlot">
+        <h2>After Normalization Plot</h2>
+        <div class="container"></div>
+        <p>Hoverable, Clickable</p>
+        <div id="densityChart"></div>
+        <div id="boxplots"></div>
       </section>
     </main>
     <footer></footer>

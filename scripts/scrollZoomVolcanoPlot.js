@@ -1,4 +1,4 @@
-const SVGwidth = document.getElementById("chart").offsetWidth * 0.8;
+const SVGwidth = document.getElementById("volcanochart").offsetWidth * 0.8;
 const SVGheight = 2 * (SVGwidth / 3);
 
 function volcanoPlot(width = SVGwidth, height = SVGheight) {
@@ -406,7 +406,7 @@ var volcanoPlot = volcanoPlot()
 d3.csv(file, parser)
   .then(function (data) {
     console.log([data]);
-    d3.select("#chart").data([data]).call(volcanoPlot);
+    d3.select("#volcanochart").data([data]).call(volcanoPlot);
   })
   .catch(function (error) {
     console.log(error);

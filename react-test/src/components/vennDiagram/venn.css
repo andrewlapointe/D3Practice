@@ -1,0 +1,52 @@
+body {
+  font-family: "Arial", sans-serif;
+}
+
+#venn-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+#venDiagram {
+  display: block;
+  margin-top: 20px;
+  text-align: left;
+  padding-left: 20px;
+}
+
+.venn-circle {
+  stroke: #000;
+  stroke-width: 1px;
+  fill-opacity: 0.5;
+}
+
+.venn-label {
+  font-size: 20px;
+  font-weight: bold;
+  fill: #000;
+}
+
+.venn-label-A {
+  font-size: 24px;
+}
+
+.venn-label-B {
+  font-size: 24px;
+}
+
+.venn-label-AB {
+  font-size: 22px;
+  fill: red;
+}
+
+#tooltip-venn {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  display: none;
+  pointer-events: none;
+  z-index: 9999;
+}
