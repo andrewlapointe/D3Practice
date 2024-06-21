@@ -119,7 +119,7 @@ const ScatterPlot = () => {
     const data = await d3.csv(dataFile, parseData);
     console.log("HERERWELSRJSLJFRLSEJKF");
     console.log(data);
-    xScale.domain([0, 600]);
+    xScale.domain([0, data.length]);
     yScale.domain([0, d3.max(data, yValue)]);
 
     xAxis
